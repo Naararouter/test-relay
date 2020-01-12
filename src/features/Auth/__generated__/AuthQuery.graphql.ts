@@ -1,11 +1,12 @@
 /* tslint:disable */
-/* @relayHash 1b77f3efcb98d676d950f8a6ede286a3 */
+/* eslint-disable */
 
 import { ConcreteRequest } from "relay-runtime";
+import { FragmentRefs } from "relay-runtime";
 export type AuthQueryVariables = {};
 export type AuthQueryResponse = {
     readonly viewer: {
-        readonly login: string;
+        readonly " $fragmentRefs": FragmentRefs<"Auth_user">;
     };
 };
 export type AuthQuery = {
@@ -18,77 +19,83 @@ export type AuthQuery = {
 /*
 query AuthQuery {
   viewer {
-    login
+    ...Auth_user
     id
   }
 }
+
+fragment Auth_user on User {
+  id
+  login
+}
 */
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "kind": "ScalarField",
-  "alias": null,
-  "name": "login",
-  "args": null,
-  "storageKey": null
-};
-return {
-  "kind": "Request",
+const node: ConcreteRequest = {
   "fragment": {
-    "kind": "Fragment",
-    "name": "AuthQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AuthQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "viewer",
-        "storageKey": null,
         "args": null,
         "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "viewer",
         "plural": false,
         "selections": [
-          (v0/*: any*/)
-        ]
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "Auth_user"
+          }
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query"
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "AuthQuery",
-    "argumentDefinitions": [],
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "viewer",
-        "storageKey": null,
         "args": null,
         "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "viewer",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "id",
             "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "login",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "AuthQuery",
     "id": null,
-    "text": "query AuthQuery {\n  viewer {\n    login\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AuthQuery",
+    "operationKind": "query",
+    "text": "query AuthQuery {\n  viewer {\n    ...Auth_user\n    id\n  }\n}\n\nfragment Auth_user on User {\n  id\n  login\n}\n"
   }
 };
-})();
-(node as any).hash = 'f5d2285745a4611c9ed760abb4b0cbb7';
+(node as any).hash = '27ed09f9e9c263906d7ce947ba3d8b69';
 export default node;
