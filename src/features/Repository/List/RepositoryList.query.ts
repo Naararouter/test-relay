@@ -1,29 +1,15 @@
 import { graphql } from "relay-runtime";
 
-export const RepositoryListRequest = graphql`
-  query RepositoryListQuery(
-    $repositoryName: String!
-    $first: Int
-    $last: Int
-    $after: String
-    $before: String
-  ) {
-    viewer {
-      ...Auth_user
-    }
-    ...RepositoryList_repository
-      @arguments(
-        repositoryName: $repositoryName
-        first: $first
-        after: $after
-        last: $last
-        before: $before
-      )
+export const RepositoryFragment = graphql`
+  fragment RepositoryList_repository on Repository {
+    id
+    name
+    viewerHasStarred
   }
 `;
 
-export const RepositoryListRequestFragment = graphql`
-  fragment RepositoryList_repository on Query
+export const RepositoryListFragment = graphql`
+  fragment RepositoryList_repositories on Query
     @argumentDefinitions(
       repositoryName: { type: "String!" }
       after: { type: "String" }
@@ -49,9 +35,7 @@ export const RepositoryListRequestFragment = graphql`
       edges {
         node {
           ... on Repository {
-            id
-            name
-            viewerHasStarred
+            ...RepositoryList_repository
           }
         }
         cursor

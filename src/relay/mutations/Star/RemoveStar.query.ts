@@ -1,8 +1,8 @@
 import { graphql } from "react-relay";
 
-export const addStarMutation = graphql`
-  mutation AddStarMutation($targetId: ID!, $currentUserId: String!) {
-    addStar(
+export const removeStarMutation = graphql`
+  mutation RemoveStarMutation($targetId: ID!, $currentUserId: String!) {
+    removeStar(
       input: { starrableId: $targetId, clientMutationId: $currentUserId }
     ) {
       starrable {

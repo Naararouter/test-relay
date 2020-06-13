@@ -1,46 +1,40 @@
 import React from "react";
 import { createFragmentContainer } from "react-relay";
-import { RepositoryList_repository } from "./__generated__/RepositoryList_repository.graphql";
-import {
-  RepositoryListRequest,
-  RepositoryListRequestFragment,
-} from "./RepositoryList.query";
-import { addStarCommit } from "../../../relay/mutations/Star/addStar";
-import { AuthRequestFragment } from "../../Auth/Auth.query";
-import { Auth_user } from "../../Auth/__generated__/Auth_user.graphql";
+import { RepositoryListFragment } from "./RepositoryList.query";
+import { RepositoryItem } from "./RepositoryItem";
 
 export const RepositoryListBase = createFragmentContainer<{
-    repository?: RepositoryList_repository;
-    user?: Auth_user;
-    setCursor: (startCursor: string, endCursor: string) => void;
-}>(({ repository, setCursor, user }) => {
+  repositories?: any;
+  user?: any;
+  setPageInfo: (pageInfo: any) => void;
+}>(
+  ({ repositories, setPageInfo, user }) => {
     React.useEffect(() => {
-        console.log({ repository, user });
-        const { endCursor, startCursor } = repository.search.pageInfo;
-        setCursor(startCursor, endCursor);
-    }, [repository]);
-    if (!repository) return null;
-    return (
-        <div>
-            <ul>
-                {repository?.search?.edges?.map(
-                    ({ node: { id, name, viewerHasStarred } }) => (
-                        <li key={id}>
-                            <span>{name}</span>
-                            <span>
-                  {viewerHasStarred ? (
-                      "Unstar"
-                  ) : (
-                      <span onClick={addStarCommit}>Star</span>
-                  )}
-                </span>
-                        </li>
-                    )
-                )}
-            </ul>
-        </div>
+      // console.log("RepositoryListBase - useEffect", { repository, user });
+      repositories?.search?.pageInfo &&
+        setPageInfo(repositories.search.pageInfo);
+    }, [repositories]);
+
+    console.log("RepositoryListBase", user);
+    return repositories?.search ? (
+      <div>
+        <ul>
+          {repositories.search.edges?.map(
+            ({ node }, idx) => (
+              <RepositoryItem
+                key={idx}
+                userId={user.id}
+                repository={node}
+              />
+            )
+          )}
+        </ul>
+      </div>
+    ) : (
+      <span>Loading...</span>
     );
-}, {
-    repository: RepositoryListRequestFragment,
-    user: AuthRequestFragment,
-})
+  },
+  {
+    repositories: RepositoryListFragment,
+  }
+);

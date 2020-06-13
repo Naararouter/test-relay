@@ -54,7 +54,7 @@ module.exports = {
       },
       {
         enforce: "pre",
-        test: /\.js$/,
+        test: /\.ts(x?)$/,
         loader: "source-map-loader"
       }
     ]

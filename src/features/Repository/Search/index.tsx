@@ -1,6 +1,6 @@
 import React from "react";
 
-export function RepositorySearch({ onSubmit }) {
+export const RepositorySearch = React.memo(({ onSubmit }: any) => {
   const inputRef = React.useRef(null);
 
   return (
@@ -15,4 +15,4 @@ export function RepositorySearch({ onSubmit }) {
       <button type="submit">Search</button>
     </form>
   );
-}
+})
