@@ -3,18 +3,8 @@ import { createFragmentContainer } from "react-relay";
 import { RepositoryListFragment } from "./RepositoryList.query";
 import { RepositoryItem } from "./RepositoryItem";
 
-export const RepositoryListBase = createFragmentContainer<{
-  repositories?: any;
-  user?: any;
-  setPageInfo: (pageInfo: any) => void;
-}>(
-  ({ repositories, setPageInfo, user }) => {
-    React.useEffect(() => {
-      // console.log("RepositoryListBase - useEffect", { repository, user });
-      repositories?.search?.pageInfo &&
-        setPageInfo(repositories.search.pageInfo);
-    }, [repositories]);
-
+export const RepositoryListBase =
+  ({ repositories, user }) => {
     console.log("RepositoryListBase", user);
     return repositories?.search ? (
       <div>
@@ -33,8 +23,4 @@ export const RepositoryListBase = createFragmentContainer<{
     ) : (
       <span>Loading...</span>
     );
-  },
-  {
-    repositories: RepositoryListFragment,
   }
-);

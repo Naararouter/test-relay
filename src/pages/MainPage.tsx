@@ -8,6 +8,7 @@ import { MainPageQuery } from "./__generated__/MainPageQuery.graphql";
 import { usePrevious } from "../hooks/usePrevious";
 import { RepositoryList } from "../features/Repository/List";
 import { WelcomeUserFragment } from "../features/WelcomeUser/WelcomeUser.query";
+import { RepositoryListFragment } from "../features/Repository/List/RepositoryList.query";
 
 const PAGE_SIZE = 10;
 
@@ -22,21 +23,14 @@ const initialState = {
 };
 const GET_NEXT_PAGE = "GET_NEXT_PAGE";
 const GET_PREV_PAGE = "GET_PREV_PAGE";
-const SET_PAGE_INFO = "SET_PAGE_INFO";
 
 function reducer(state, action) {
   switch (action.type) {
     case GET_NEXT_PAGE: {
-      return { ...state, isBack: false };
+      return { ...state, isBack: false, pageInfo: action.pageInfo };
     }
     case GET_PREV_PAGE: {
-      return { ...state, isBack: true };
-    }
-    case SET_PAGE_INFO: {
-      return {
-        ...state,
-        pageInfo: action.pageInfo,
-      };
+      return { ...state, isBack: true, pageInfo: action.pageInfo };
     }
     default:
       throw new Error();
@@ -44,36 +38,39 @@ function reducer(state, action) {
 }
 
 const MainPageBase = createFragmentContainer(
-  ({ response, error, onSubmit, isSubmitTouched, state, dispatch, user }: any) => {
-    const prevResponse = usePrevious(user);
+  ({
+    error,
+    onSubmit,
+    isSubmitTouched,
+    dispatch,
+    user,
+    repositories,
+  }: any) => {
+    const prevUser = usePrevious(user);
+
     if (error) {
       return <div>Error!</div>;
     }
-    const login = user ? user.login : prevResponse?.login;
 
-    const goBack = () => dispatch({ type: GET_PREV_PAGE });
-    const goNext = () => dispatch({ type: GET_NEXT_PAGE });
-    const setPageInfo = React.useCallback(
-      (pageInfo) => dispatch({ type: SET_PAGE_INFO, pageInfo }),
-      []
-    );
-    // if (!props) {
-    //   return <div>Loading repositories...</div>;
-    // }
-    console.log({ prevResponse, response, user });
+    let pageInfo = repositories?.search?.pageInfo;
+    const login = user ? user.login : prevUser?.login;
+
+    const goBack = () => dispatch({ type: GET_PREV_PAGE, pageInfo });
+    const goNext = () => dispatch({ type: GET_NEXT_PAGE, pageInfo });
+
+    console.log({ user, repositories });
     return (
       <>
         <WelcomeUser login={login} />
         <RepositorySearch onSubmit={onSubmit} />
         {isSubmitTouched && (
           <RepositoryList
-            hasNextPage={state.hasNextPage}
-            hasPreviousPage={state.hasPreviousPage}
+            hasNextPage={pageInfo?.hasNextPage}
+            hasPreviousPage={pageInfo?.hasPreviousPage}
             user={user}
-            repositories={response}
+            repositories={repositories}
             goBack={goBack}
             goNext={goNext}
-            setPageInfo={setPageInfo}
           />
         )}
       </>
@@ -81,29 +78,34 @@ const MainPageBase = createFragmentContainer(
   },
   {
     user: WelcomeUserFragment,
+    repositories: RepositoryListFragment,
   }
 );
 
 const Test = React.memo(
-  ({ variables, onSubmit, isSubmitTouched, state, dispatch }: any) => {
+  ({
+    variables,
+    onSubmit,
+    isSubmitTouched,
+    dispatch,
+  }: any) => {
     return (
       <QueryRenderer<MainPageQuery>
         environment={environment}
         query={MainPageRequest}
         variables={variables}
         render={({ props, error }) => {
-          console.log({ props }, '!');
+          console.log({ props }, "!");
           return (
-              <MainPageBase
-                  response={props}
-                  user={props?.viewer}
-                  error={error}
-                  onSubmit={onSubmit}
-                  isSubmitTouched={isSubmitTouched}
-                  state={state}
-                  dispatch={dispatch}
-              />
-          )
+            <MainPageBase
+              repositories={props}
+              user={props?.viewer}
+              error={error}
+              onSubmit={onSubmit}
+              isSubmitTouched={isSubmitTouched}
+              dispatch={dispatch}
+            />
+          );
         }}
       />
     );
@@ -118,7 +120,7 @@ export function MainPage() {
   const { pageInfo } = state;
 
   const variables = React.useMemo(() => {
-    // console.log("calculate variables");
+    console.log("calculate variables", pageInfo);
     return state.isBack
       ? {
           repositoryName,
@@ -130,7 +132,7 @@ export function MainPage() {
           first: PAGE_SIZE,
           after: pageInfo.endCursor,
         };
-  }, [state.isBack, repositoryName]);
+  }, [pageInfo, repositoryName]);
 
   const onSubmit = React.useCallback((value) => {
     setSubmitTouch(true);
@@ -139,7 +141,6 @@ export function MainPage() {
 
   return (
     <Test
-      state={state}
       dispatch={dispatch}
       onSubmit={onSubmit}
       isSubmitTouched={isSubmitTouched}

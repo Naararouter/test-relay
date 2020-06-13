@@ -6,7 +6,6 @@ export function RepositoryList({
   hasNextPage,
   goBack,
   goNext,
-  setPageInfo,
   user,
   repositories,
 }) {
@@ -23,7 +22,6 @@ export function RepositoryList({
       <RepositoryListBase
         repositories={repositories}
         user={user}
-        setPageInfo={setPageInfo}
       />
     </>
   );
