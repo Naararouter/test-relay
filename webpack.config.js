@@ -1,30 +1,29 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: "development",
   devtool: "source-map",
 
-  entry: './src/index.tsx',
+  entry: "./src/index.tsx",
   resolve: {
-    // mainFields: ['browser', 'main', 'module'],
-    extensions: [".mjs", ".js", ".ts", ".tsx", ".graphql"]
+    extensions: [".mjs", ".js", ".ts", ".tsx", ".graphql"],
   },
 
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: "[name].bundle.js",
+    path: path.resolve(__dirname, "dist"),
   },
 
   devServer: {
-      contentBase: './dist',
-      hot: true,
+    contentBase: "./dist",
+    hot: true,
   },
 
   node: {
-    fs: 'empty',
-    module: 'empty',
+    fs: "empty",
+    module: "empty",
   },
 
   module: {
@@ -32,39 +31,39 @@ module.exports = {
       {
         test: /\.mjs$/,
         include: /node_modules/,
-        type: 'javascript/auto'
+        type: "javascript/auto",
       },
       {
         test: /(?<!(query))\.ts(x?)$/,
         exclude: /node_modules/,
         use: [
           {
-            loader: "ts-loader"
-          }
-        ]
+            loader: "ts-loader",
+          },
+        ],
       },
       {
         test: /\.query\.ts/,
         exclude: /node_modules/,
         use: [
           {
-            loader: "babel-loader"
-          }
-        ]
+            loader: "babel-loader",
+          },
+        ],
       },
       {
         enforce: "pre",
         test: /\.ts(x?)$/,
-        loader: "source-map-loader"
-      }
-    ]
+        loader: "source-map-loader",
+      },
+    ],
   },
 
   plugins: [
     new Dotenv(),
     new HtmlWebpackPlugin({
-      title: 'My App',
-      template: 'src/index.html'
-    })
-  ]
+      title: "My App",
+      template: "src/index.html",
+    }),
+  ],
 };

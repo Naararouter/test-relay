@@ -1,5 +1,13 @@
 import React from "react";
-import { RepositoryListBase } from "./RepositoryList";
+import { RepositoryListBase } from "./RepositoryList.base";
+import { IMainPageFragment } from "../../../pages/MainPage/MainPage.base";
+
+interface IRepositoryList extends IMainPageFragment {
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  goBack: () => void;
+  goNext: () => void;
+}
 
 export function RepositoryList({
   hasPreviousPage,
@@ -8,8 +16,7 @@ export function RepositoryList({
   goNext,
   user,
   repositories,
-}) {
-  // console.log("RepositoryList");
+}: IRepositoryList) {
   return (
     <>
       <div>
@@ -19,10 +26,7 @@ export function RepositoryList({
         {hasPreviousPage && <button onClick={goBack}>Prev Page</button>}
         {hasNextPage && <button onClick={goNext}>Next Page</button>}
       </div>
-      <RepositoryListBase
-        repositories={repositories}
-        user={user}
-      />
+      <RepositoryListBase repositories={repositories} user={user} />
     </>
   );
 }

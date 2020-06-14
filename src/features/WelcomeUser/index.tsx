@@ -1,5 +1,7 @@
 import React from "react";
 
-export const WelcomeUser = React.memo(({ login }: any) => {
-    return <span>Hello, {login}!</span>;
+export const WelcomeUser = React.memo(({ login }: { login: string }) => {
+  return <span>Hello, {login}!</span>;
 });
+
+WelcomeUser.displayName = "WelcomeUser";

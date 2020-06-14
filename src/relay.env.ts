@@ -1,25 +1,17 @@
-import {
-  Environment,
-  Network,
-  RecordSource,
-  Store,
-} from 'relay-runtime';
+import { Environment, Network, RecordSource, Store } from "relay-runtime";
 
-function fetchQuery(
-  operation: any,
-  variables: any,
-) {
-  return fetch('https://api.github.com/graphql', {
-    method: 'POST',
+function fetchQuery(operation: LIBRARY_ANY, variables: LIBRARY_ANY) {
+  return fetch("https://api.github.com/graphql", {
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       query: operation.text,
       variables,
     }),
-  }).then(response => {
+  }).then((response) => {
     return response.json();
   });
 }

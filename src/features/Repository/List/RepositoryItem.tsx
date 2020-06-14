@@ -1,12 +1,14 @@
 import React from "react";
 import { createFragmentContainer } from "react-relay";
-import {
-  RepositoryFragment,
-} from "./RepositoryList.query";
+import { RepositoryFragment } from "./RepositoryList.query";
 import { addStarCommit, removeStarCommit } from "../../../relay/mutations/Star";
+import { RepositoryList_repository } from "./__generated__/RepositoryList_repository.graphql";
 
-export const RepositoryItem = createFragmentContainer<any>(
-  ({ repository: { id, viewerHasStarred, name }, userId  }) => {
+export const RepositoryItem = createFragmentContainer<{
+  userId: string;
+  repository: RepositoryList_repository;
+}>(
+  ({ repository: { id, viewerHasStarred, name }, userId }) => {
     return (
       <li>
         <span>{name}</span>
